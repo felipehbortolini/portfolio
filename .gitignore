@@ -1,0 +1,15 @@
+# Claude Code / Skills
+.agents/
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+
+# Node (caso instale deps futuramente)
+node_modules/
