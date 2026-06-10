@@ -124,13 +124,20 @@ window.addEventListener('scroll', () => {
 document.querySelectorAll('.card').forEach(card => {
   card.addEventListener('mousemove', (e) => {
     const rect = card.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const x = px / rect.width - 0.5;
+    const y = py / rect.height - 0.5;
     card.style.transform = `rotateY(${x * 7}deg) rotateX(${-y * 7}deg) translateY(-6px)`;
+    // Glow radial que acompanha o cursor (consumido pelo background do card)
+    card.style.setProperty('--mx', px + 'px');
+    card.style.setProperty('--my', py + 'px');
   });
 
   card.addEventListener('mouseleave', () => {
     card.style.transform = '';
+    card.style.removeProperty('--mx');
+    card.style.removeProperty('--my');
   });
 });
 
@@ -202,7 +209,7 @@ contactForm?.addEventListener('submit', async (e) => {
 /* ============================================================
    SCROLL REVEAL — fade-in com stagger
    ============================================================ */
-const revealElements = document.querySelectorAll('.card, .section-header, .contact-wrapper, .iframe-wrapper, .hero-stats .stat');
+const revealElements = document.querySelectorAll('.card, .section-header, .contact-wrapper, .iframe-wrapper, .hero-stats .stat, .segment-pill');
 
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -230,4 +237,8 @@ revealElements.forEach(el => {
 
 document.querySelectorAll('.card, .hero-stats .stat').forEach((el, i) => {
   el.style.transitionDelay = `${(i % 6) * 0.08}s`;
+});
+
+document.querySelectorAll('.segment-pill').forEach((el, i) => {
+  el.style.transitionDelay = `${i * 0.06}s`;
 });

@@ -386,6 +386,66 @@ p { font-weight: 400; }
   box-shadow: var(--shadow-glow);
 }
 
+/* Segmentos de empresas atendidas */
+.hero-segments {
+  margin-top: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.segments-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--ink-faint);
+}
+
+.segments-label::before,
+.segments-label::after {
+  content: '';
+  width: 42px;
+  height: 1px;
+}
+
+.segments-label::before { background: linear-gradient(90deg, transparent, var(--jet-soft)); }
+.segments-label::after  { background: linear-gradient(90deg, var(--jet-soft), transparent); }
+
+.segments-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  max-width: 680px;
+}
+
+.segment-pill {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding: 0.45rem 1.15rem;
+  border-radius: 100px;
+  border: 1px solid var(--stroke);
+  background: linear-gradient(160deg, rgba(189, 217, 215, 0.08), rgba(189, 217, 215, 0.015));
+  backdrop-filter: blur(6px);
+  transition: all var(--transition);
+  cursor: default;
+}
+
+.segment-pill:hover {
+  color: var(--jet);
+  border-color: var(--stroke-bright);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-3px);
+}
+
 /* Stats animados no hero */
 .hero-stats {
   display: flex;
@@ -484,6 +544,15 @@ p { font-weight: 400; }
 
 .section-header h2 { margin-bottom: var(--spacing-sm); }
 
+/* Palavra-chave em gradiente nos títulos de seção */
+.section-header h2 em {
+  font-style: normal;
+  background: var(--grad-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .section-header p {
   max-width: 560px;
   margin: 0 auto;
@@ -508,6 +577,54 @@ p { font-weight: 400; }
   counter-reset: cat;
 }
 
+/* Seção alternada — fundo profundo com aurora à direita */
+.section-alt {
+  background: var(--bg-deep);
+  overflow: hidden;
+}
+
+.section-alt::before {
+  content: '';
+  position: absolute;
+  width: 560px; height: 560px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(14, 94, 104, 0.5), transparent 65%);
+  filter: blur(90px);
+  top: -180px; right: -160px;
+  pointer-events: none;
+  animation: drift-b 24s ease-in-out infinite alternate;
+}
+
+/* Variante — glow jet stream à esquerda */
+.section-glow-left {
+  overflow: hidden;
+}
+
+.section-glow-left::before {
+  content: '';
+  position: absolute;
+  width: 520px; height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(189, 217, 215, 0.14), transparent 60%);
+  filter: blur(90px);
+  bottom: -180px; left: -160px;
+  pointer-events: none;
+  animation: drift-a 26s ease-in-out infinite alternate;
+}
+
+/* Linha separadora luminosa entre seções */
+.glow-line {
+  height: 1px;
+  border: none;
+  margin: 0;
+  background: linear-gradient(90deg, transparent 8%, rgba(189, 217, 215, 0.35) 50%, transparent 92%);
+  position: relative;
+  z-index: 2;
+}
+
+/* Compensa o header fixo nos saltos de âncora */
+section[id] { scroll-margin-top: 84px; }
+
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -517,7 +634,10 @@ p { font-weight: 400; }
 
 .card {
   counter-increment: cat;
-  background: var(--grad-card), var(--bg-deep);
+  /* 1ª camada: glow radial que segue o mouse (--mx/--my via JS) */
+  background:
+    radial-gradient(240px circle at var(--mx, 50%) var(--my, -30%), rgba(189, 217, 215, 0.09), transparent 65%),
+    var(--grad-card), var(--bg-deep);
   border: 1px solid var(--stroke);
   border-radius: var(--radius-md);
   padding: var(--spacing-md) var(--spacing-md) calc(var(--spacing-md) * 1.25);
