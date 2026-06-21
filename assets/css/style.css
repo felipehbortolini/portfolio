@@ -559,8 +559,7 @@ section[id] { scroll-margin-top: 90px; }
   place-items: center;
   border-radius: 12px;
   background: var(--graphite);
-  border: 1px solid var(--stroke-steel);
-  box-shadow: var(--glow-steel);
+  border: 1px solid var(--stroke);
   color: var(--steel);
 }
 .step-ico svg { width: 22px; height: 22px; }
@@ -631,6 +630,7 @@ section[id] { scroll-margin-top: 90px; }
   border-color: var(--stroke-steel);
   box-shadow: var(--sh-2);
 }
+.work-card.no-link { cursor: default; }
 
 .work-thumb {
   position: relative;
@@ -741,7 +741,7 @@ section[id] { scroll-margin-top: 90px; }
     linear-gradient(160deg, #1c232a, #0e1215);
 }
 .thumb-py::before {
-  content: '> import pandas\n> def solve():\n    return insight';
+  content: '> import pandas\A> def solve():\A    return insight';
   white-space: pre;
   position: absolute;
   left: 10%; top: 24%;

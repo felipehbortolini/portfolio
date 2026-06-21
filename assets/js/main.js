@@ -177,7 +177,7 @@
      ---------------------------------------------------------- */
   (function particles() {
     if (reduced) return;
-    const host = document.querySelector('.hero .hero-bg') || document.querySelector('.page-hero');
+    const host = document.querySelector('.hero .hero-bg');
     if (!host) return;
 
     const canvas = document.createElement('canvas');
@@ -230,6 +230,99 @@
     window.addEventListener('resize', resize);
     new IntersectionObserver(([en]) => {
       if (en.isIntersecting) { if (!raf) draw(); }
+      else { cancelAnimationFrame(raf); raf = null; }
+    }).observe(host);
+  })();
+
+  /* ----------------------------------------------------------
+     AETHER FIELD — rede de partículas interativa (page-hero)
+     adaptado do AetherFlow para a paleta aço, escopo no header
+     ---------------------------------------------------------- */
+  (function aetherField() {
+    if (reduced) return;
+    const host = document.querySelector('.page-hero');
+    if (!host) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'particles-canvas';
+    host.prepend(canvas);
+    const ctx = canvas.getContext('2d');
+    const mouse = { x: null, y: null, radius: 160 };
+    let particles = [], raf = null;
+
+    function Particle(x, y, dx, dy, size) { this.x = x; this.y = y; this.dx = dx; this.dy = dy; this.size = size; }
+    Particle.prototype.draw = function () {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(91, 196, 214, 0.8)';
+      ctx.fill();
+    };
+    Particle.prototype.update = function () {
+      if (this.x > canvas.width || this.x < 0) this.dx = -this.dx;
+      if (this.y > canvas.height || this.y < 0) this.dy = -this.dy;
+      if (mouse.x !== null) {
+        const dx = mouse.x - this.x, dy = mouse.y - this.y, dist = Math.hypot(dx, dy) || 1;
+        if (dist < mouse.radius + this.size) {
+          const f = (mouse.radius - dist) / mouse.radius;
+          this.x -= (dx / dist) * f * 4;
+          this.y -= (dy / dist) * f * 4;
+        }
+      }
+      this.x += this.dx; this.y += this.dy; this.draw();
+    };
+
+    function init() {
+      particles = [];
+      const n = Math.min(110, Math.floor((canvas.width * canvas.height) / 11000));
+      for (let i = 0; i < n; i++) {
+        const size = Math.random() * 1.8 + 1;
+        const x = Math.random() * (canvas.width - size * 2) + size;
+        const y = Math.random() * (canvas.height - size * 2) + size;
+        particles.push(new Particle(x, y, (Math.random() * 0.4) - 0.2, (Math.random() * 0.4) - 0.2, size));
+      }
+    }
+    function connect() {
+      const maxD = (canvas.width / 7) * (canvas.height / 7);
+      for (let a = 0; a < particles.length; a++) {
+        for (let b = a + 1; b < particles.length; b++) {
+          const dx = particles[a].x - particles[b].x, dy = particles[a].y - particles[b].y;
+          const d = dx * dx + dy * dy;
+          if (d < maxD) {
+            const op = 1 - d / maxD;
+            let near = false;
+            if (mouse.x !== null) {
+              const mx = particles[a].x - mouse.x, my = particles[a].y - mouse.y;
+              near = (mx * mx + my * my) < mouse.radius * mouse.radius;
+            }
+            ctx.strokeStyle = near ? 'rgba(232, 236, 239, ' + op + ')' : 'rgba(91, 196, 214, ' + (op * 0.45) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particles[a].x, particles[a].y);
+            ctx.lineTo(particles[b].x, particles[b].y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+    function animate() {
+      raf = requestAnimationFrame(animate);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of particles) p.update();
+      connect();
+    }
+    function resize() { canvas.width = host.offsetWidth; canvas.height = host.offsetHeight; init(); }
+
+    resize();
+    window.addEventListener('resize', resize);
+    host.addEventListener('pointermove', e => {
+      const r = host.getBoundingClientRect();
+      mouse.x = e.clientX - r.left;
+      mouse.y = e.clientY - r.top;
+    });
+    host.addEventListener('pointerleave', () => { mouse.x = null; mouse.y = null; });
+    animate();
+    new IntersectionObserver(([en]) => {
+      if (en.isIntersecting) { if (!raf) animate(); }
       else { cancelAnimationFrame(raf); raf = null; }
     }).observe(host);
   })();
